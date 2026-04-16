@@ -1,6 +1,7 @@
 import torch
 from models.cnn import CNNBackbone
 from models.vit import VisionTransformer
+from models.gnn import GNNModel
 from PIL import Image
 from torchvision import transforms
 import os
@@ -9,6 +10,12 @@ import matplotlib.pyplot as plt
 # ---------- Models ----------
 cnn = CNNBackbone()
 vit = VisionTransformer()
+gnn = GNNModel(
+    in_dim=128,
+    hidden_dim=128,
+    num_layers=2,
+    pool="none"
+)
 
 # ---------- Transform ----------
 transform = transforms.Compose([
@@ -45,3 +52,10 @@ print("ViT Output shape:", vit_out.shape)
 
 # ---------- Inspect tokens ----------
 print("First token sample:", vit_out[0, 0, :5])
+
+# ---------- GNN (UPDATED) ----------
+gnn_out = gnn(vit_out)
+print("GNN Output shape:", gnn_out.shape)
+
+# ---------- Inspect GNN output ----------
+print("First GNN node sample:", gnn_out[0, 0, :5])

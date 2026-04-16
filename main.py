@@ -1,12 +1,14 @@
 import torch
 from models.cnn import CNNBackbone
+from models.vit import VisionTransformer
 from PIL import Image
 from torchvision import transforms
 import os
 import matplotlib.pyplot as plt
 
-# ---------- Model ----------
-model = CNNBackbone()
+# ---------- Models ----------
+cnn = CNNBackbone()
+vit = VisionTransformer()
 
 # ---------- Transform ----------
 transform = transforms.Compose([
@@ -25,14 +27,21 @@ image = transform(image).unsqueeze(0)
 
 print("Input shape:", image.shape)
 
-# ---------- Forward ----------
-out = model(image)
+# ---------- CNN ----------
+cnn_out = cnn(image)
+print("CNN Output shape:", cnn_out.shape)
 
-print("Output shape:", out.shape)
-
-feature_map = out[0, 0].detach().numpy()
+# ---------- Visualize CNN feature ----------
+feature_map = cnn_out[0, 0].detach().numpy()
 
 plt.imshow(feature_map, cmap='viridis')
 plt.title("CNN Feature Map")
 plt.colorbar()
 plt.show()
+
+# ---------- ViT ----------
+vit_out = vit(cnn_out)
+print("ViT Output shape:", vit_out.shape)
+
+# ---------- Inspect tokens ----------
+print("First token sample:", vit_out[0, 0, :5])
